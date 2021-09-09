@@ -1,3 +1,11 @@
+-- Steps at command line:
+--  1. launch psql with relevant database: 
+--    1(a): local server: psql -U imccart -d 'race-concordance-referrals'
+--    1(b): AWS server: psql -h 'ip address to server' -U imccart -d 'race-concordance-referrals'
+--  2. cd into current working directory: \cd
+--  3. run file from command line: \i 'data-code/nppes.sql'
+
+
 DROP TABLE IF EXISTS nppes_main;
 CREATE TABLE nppes_main (
 	npi	varchar(50),
@@ -331,7 +339,5 @@ CREATE TABLE nppes_main (
 	taxonomy_group15 varchar(50),
 	certification_date varchar(10)
 );
-	
-COPY nppes_main
-FROM '/home/imccart/Professional/Research Projects/Physician Race Concordance/race-concordance-referrals/data/npidata_pfile_20050523-20200809.csv'
-WITH CSV HEADER;
+
+\copy nppes_main FROM 'data/npidata_pfile_20050523-20200809.csv' WITH CSV HEADER;
