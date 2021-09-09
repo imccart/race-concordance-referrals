@@ -25,4 +25,4 @@ dbListTables(db.connect)
 # Import and clean data ---------------------------------------------------
 
 nppes.data <- dbReadTable(db.connect,'nppes_main')
-
+nppes.data <- as_tibble(nppes.data)
