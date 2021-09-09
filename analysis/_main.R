@@ -15,7 +15,7 @@ pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stargazer, knitr, kableExtr
 
 
 # Connect to PostgreSQL ---------------------------------------------------
-source('analysis/paths_home.R')
+source('analysis/paths_aws.R')
 db.connect <- dbConnect(RPostgres::Postgres(), dbname = db, 
                  host=host_db, port=db_port, 
                  user=db_user, password=db_password)
