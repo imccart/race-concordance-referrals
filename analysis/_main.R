@@ -17,23 +17,33 @@ pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stargazer, knitr, kableExtr
 
 
 # Build data --------------------------------------------------------------
-source("data-code/nameprism.R")
+#source("data-code/nameprism.R")
 
 
 # Clean race data ---------------------------------------------------------
-final.dat <- read_csv(file="data/race-dat1.csv",
+npi.data <- dbGetQuery(db.connect,"SELECT DISTINCT npi, lastname, firstname FROM nppes_main")
+
+race.dat <- read_csv(file="data/race-dat1.csv",
                       col_names=c("nameprism","firstname","lastname")) %>%
-  separate(nameprism, sep="\n", into=c("two_race","hispanic","api","black","indian","white")) %>%
+  separate(nameprism, sep="\n", into=c("two_race","hispanic","api","black","aian","white")) %>%
   separate(two_race, sep=",", into=c("cat1","two_race")) %>%
   separate(hispanic, sep=",", into=c("cat2","hispanic")) %>%
   separate(api, sep=",", into=c("cat3","api")) %>%
   separate(black, sep=",", into=c("cat4","black")) %>%
-  separate(indian, sep=",", into=c("cat5","indian")) %>%
+  separate(aian, sep=",", into=c("cat5","aian")) %>%
   separate(white, sep=",", into=c("cat6","white")) %>%
-  select(lastname, firstname, two_race, hispanic, api, black, indian, white)
+  select(lastname, firstname, two_race, hispanic, api, black, aian, white) %>%
+  mutate(across(c("two_race","hispanic","api","black","aian","white"), as.numeric))
 
-final.dat <- final.dat %>% 
-  mutate(across(c("two_race","hispanic","api","black","indian","white"), as.numeric)) %>%
+npi.race <- npi.data %>% filter(lastname!="") %>%
+  left_join(race.dat, by=c("lastname","firstname"))
+
+write_tsv(npi.race, 'data/final-nppes-race.csv')
+
+
+# Summary -----------------------------------------------------------------
+
+final.dat <- npi.race %>%
   mutate(
     black_5=case_when(
       black>.05 ~ 1,
